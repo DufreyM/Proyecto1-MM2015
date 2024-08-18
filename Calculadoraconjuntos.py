@@ -1,11 +1,3 @@
-# UNIVERSIDAD DEL VALLE DE GUATEMALA
-# Matemática Discreta
-# Descripción: programa que permite crear conjuntos y realizar operaciones con ellos 
-# (complemento, union, intersección, diferencia, diferencia simétrica)
-# Autores: Leonardo Dufrey Mejía Mejía, Maria José Girón Isidro
-# Fecha de creación:  17 de Agosto de 2024
-# Fecha de última modificación: 
-
 import tkinter as tk
 from tkinter import messagebox
 
@@ -17,22 +9,22 @@ class ConjuntosApp:
 
         # Configurar el menú principal
         self.label_menu = tk.Label(root, text="Menú Principal", font=('Helvetica', 16))
-        self.label_menu.pack(pady=150)
+        self.label_menu.pack(pady=50)
 
         self.btn_construir = tk.Button(root, text="Construir Conjuntos", command=self.construir_conjuntos)
-        self.btn_construir.pack(pady=50)
+        self.btn_construir.pack(pady=5)
 
         self.btn_operar = tk.Button(root, text="Operar Conjuntos", command=self.operar_conjuntos)
-        self.btn_operar.pack(pady=50)
+        self.btn_operar.pack(pady=5)
 
         self.btn_finalizar = tk.Button(root, text="Finalizar", command=root.quit)
-        self.btn_finalizar.pack(pady=50)
+        self.btn_finalizar.pack(pady=5)
 
     def construir_conjuntos(self):
         self.construir_ventana = tk.Toplevel(self.root)
         self.construir_ventana.title("Construir Conjuntos")
         
-        tk.Label(self.construir_ventana, text="Ingrese los elementos del conjunto (A-Z, 0-9):").pack(pady=10)
+        tk.Label(self.construir_ventana, text="Ingrese los elementos del conjunto (A-Z, 0-9) separados por comas:").pack(pady=10)
         self.entry_conjunto = tk.Entry(self.construir_ventana)
         self.entry_conjunto.pack(pady=5)
         
@@ -40,9 +32,10 @@ class ConjuntosApp:
     
     def agregar_conjunto(self):
         conjunto = self.entry_conjunto.get().split(',')
+        conjunto = {e.strip() for e in conjunto}  # Elimina espacios adicionales
         conjunto_valido = all(self.validar_entrada(e) for e in conjunto)
         if conjunto_valido:
-            self.conjuntos.append(set(conjunto))
+            self.conjuntos.append(conjunto)
             messagebox.showinfo("Éxito", "Conjunto agregado exitosamente.")
             self.construir_ventana.destroy()
         else:
