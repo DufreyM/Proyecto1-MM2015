@@ -57,32 +57,59 @@ class ConjuntosApp:
         tk.Radiobutton(self.operar_ventana, text="Diferencia", variable=self.operacion, value="Diferencia").pack()
         tk.Radiobutton(self.operar_ventana, text="Diferencia Simétrica", variable=self.operacion, value="Diferencia Simetrica").pack()
 
+        tk.Label(self.operar_ventana, text="Seleccione los conjuntos a operar (haga click encima de los que quiera usar):").pack(pady=10)
+        self.listbox_conjuntos = tk.Listbox(self.operar_ventana, selectmode=tk.MULTIPLE)
+        for i, conjunto in enumerate(self.conjuntos):
+            self.listbox_conjuntos.insert(tk.END, f"Conjunto {i+1}: {', '.join(conjunto)}")
+        self.listbox_conjuntos.pack(pady=5)
+
         tk.Button(self.operar_ventana, text="Realizar Operación", command=self.realizar_operacion).pack(pady=10)
     
     def realizar_operacion(self):
         operacion = self.operacion.get()
-        conjunto_1 = self.conjuntos[0]
-        conjunto_2 = self.conjuntos[1]
+        indices = self.listbox_conjuntos.curselection()
+        seleccionados = [self.conjuntos[i] for i in indices]
 
-        resultado = set()
+        if not seleccionados:
+            messagebox.showwarning("Advertencia", "Debe seleccionar al menos un conjunto para operar.")
+            return
 
-        if operacion == "Complemento":
-            universo = set("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-            resultado = universo - conjunto_1
-        elif operacion == "Union":
-            resultado = conjunto_1 | conjunto_2
-        elif operacion == "Interseccion":
-            resultado = conjunto_1 & conjunto_2
-        elif operacion == "Diferencia":
-            resultado = conjunto_1 - conjunto_2
-        elif operacion == "Diferencia Simetrica":
-            resultado = conjunto_1 ^ conjunto_2
+        resultado = seleccionados[0]  # Con esto indicamos que empezamos con el primer conjunto seleccionado
+
+        for conjunto in seleccionados[1:]:
+            if operacion == "Union":
+                resultado = self.union(resultado, conjunto)
+            elif operacion == "Interseccion":
+                resultado = self.interseccion(resultado, conjunto)
+            elif operacion == "Diferencia":
+                resultado = self.diferencia(resultado, conjunto)
+            elif operacion == "Diferencia Simetrica":
+                resultado = self.diferencia_simetrica(resultado, conjunto)
+            elif operacion == "Complemento":
+                universo = set("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+                resultado = self.complemento(resultado, universo)
         
-        messagebox.showinfo("Resultado", f"El resultado de {operacion} es: {resultado}")
+        messagebox.showinfo("Resultado", f"El resultado de {operacion} es: {', '.join(sorted(resultado))}")
         self.operar_ventana.destroy()
 
     def validar_entrada(self, elemento):
         return elemento.isalnum() and len(elemento) == 1
+
+    # Métodos para las operaciones entre conjuntos
+    def union(self, conjunto1, conjunto2):
+        return conjunto1 | conjunto2
+
+    def interseccion(self, conjunto1, conjunto2):
+        return conjunto1 & conjunto2
+
+    def diferencia(self, conjunto1, conjunto2):
+        return conjunto1 - conjunto2
+
+    def diferencia_simetrica(self, conjunto1, conjunto2):
+        return conjunto1 ^ conjunto2
+
+    def complemento(self, conjunto, universo):
+        return universo - conjunto
 
 # Ejecutar la aplicación
 root = tk.Tk()
