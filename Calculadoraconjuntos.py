@@ -32,7 +32,7 @@ class ConjuntosApp:
     
     def agregar_conjunto(self):
         conjunto = self.entry_conjunto.get().split(',')
-        conjunto = {e.strip() for e in conjunto}  # Elimina espacios adicionales
+        conjunto = [e.strip() for e in conjunto]  # Elimina espacios adicionales
         conjunto_valido = all(self.validar_entrada(e) for e in conjunto)
         if conjunto_valido:
             self.conjuntos.append(conjunto)
@@ -86,7 +86,7 @@ class ConjuntosApp:
             elif operacion == "Diferencia Simetrica":
                 resultado = self.diferencia_simetrica(resultado, conjunto)
             elif operacion == "Complemento":
-                universo = set("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+                universo = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
                 resultado = self.complemento(resultado, universo)
         
         messagebox.showinfo("Resultado", f"El resultado de {operacion} es: {', '.join(sorted(resultado))}")
@@ -97,19 +97,42 @@ class ConjuntosApp:
 
     # Métodos para las operaciones entre conjuntos
     def union(self, conjunto1, conjunto2):
-        return conjunto1 | conjunto2
+        resultado = conjunto1[:]  # Copia el primer conjunto
+        for elem in conjunto2:
+            if elem not in resultado:
+                resultado.append(elem)
+        return resultado
 
     def interseccion(self, conjunto1, conjunto2):
-        return conjunto1 & conjunto2
+        resultado = []
+        for elem in conjunto1:
+            if elem in conjunto2:
+                resultado.append(elem)
+        return resultado
 
     def diferencia(self, conjunto1, conjunto2):
-        return conjunto1 - conjunto2
+        resultado = []
+        for elem in conjunto1:
+            if elem not in conjunto2:
+                resultado.append(elem)
+        return resultado
 
     def diferencia_simetrica(self, conjunto1, conjunto2):
-        return conjunto1 ^ conjunto2
+        resultado = []
+        for elem in conjunto1:
+            if elem not in conjunto2:
+                resultado.append(elem)
+        for elem in conjunto2:
+            if elem not in conjunto1 and elem not in resultado:
+                resultado.append(elem)
+        return resultado
 
     def complemento(self, conjunto, universo):
-        return universo - conjunto
+        resultado = []
+        for elem in universo:
+            if elem not in conjunto:
+                resultado.append(elem)
+        return resultado
 
 # Ejecutar la aplicación
 root = tk.Tk()
