@@ -156,7 +156,6 @@ class ConjuntosApp:
     def validar_entrada(self, elemento):
         return elemento.isalnum() and len(elemento) == 1
 
-    # Métodos para las operaciones entre conjuntos sin usar 'set'
     def union(self, conjunto1, conjunto2):
         resultado = conjunto1[:]
         for elemento in conjunto2:
