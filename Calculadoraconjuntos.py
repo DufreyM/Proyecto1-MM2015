@@ -76,7 +76,8 @@ class ConjuntosApp:
 
         #Se seleccionan los conjuntos sobre los cuales se va a hacer la operación. 
         ttk.Label(self.operar_ventana, text="Seleccione los conjuntos a operar (haga click encima de los que quiera usar):").pack(pady=10)
-        self.listbox_conjuntos = tk.Listbox(self.operar_ventana, selectmode=tk.SINGLE, font=('Helvetica', 12))
+        # Ajusta la altura y el ancho de la Listbox para que sea más grande
+        self.listbox_conjuntos = tk.Listbox(self.operar_ventana, selectmode=tk.SINGLE, font=('Helvetica', 12), height=10, width=50)
         self.listbox_conjuntos.bind('<<ListboxSelect>>', self.agregar_a_seleccionados)
         for i, conjunto in enumerate(self.conjuntos):
             self.listbox_conjuntos.insert(tk.END, f"Conjunto {i+1}: {{{', '.join(conjunto)}}}")
@@ -93,7 +94,13 @@ class ConjuntosApp:
     #Función que trabaja con las operaciones definidas abajo. 
     def realizar_operacion(self):
         operacion = self.operacion.get()
-        #Este if permite manejar la entrada de datos. 
+
+        # Verificar si se seleccionó una operación
+        if not operacion:
+            messagebox.showwarning("Advertencia", "Debe seleccionar una operación antes de continuar.")
+            return
+
+        # Este if permite manejar la entrada de datos.
         if len(self.seleccionados) < 2:
             messagebox.showwarning("Advertencia", "Debe seleccionar al menos dos conjuntos para operar.")
             return
@@ -110,7 +117,7 @@ class ConjuntosApp:
             elif operacion == "Diferencia Simetrica":
                 resultado = self.diferencia_simetrica(resultado, conjunto)
             elif operacion == "Complemento":
-                #Definimos el conjunto universo de A-Z y de 0-9
+                # Definimos el conjunto universo de A-Z y de 0-9
                 universo = [chr(i) for i in range(ord('A'), ord('Z')+1)] + [str(i) for i in range(0, 10)]
                 resultado = self.complemento(resultado, universo)
 
@@ -119,6 +126,7 @@ class ConjuntosApp:
         # Limpiar los conjuntos seleccionados después de la operación
         self.seleccionados.clear()
         self.operar_ventana.destroy()
+
 
     #Función con la lógica para editar los conjuntos. 
     def editar_conjuntos(self):
