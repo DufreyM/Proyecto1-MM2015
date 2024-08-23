@@ -30,6 +30,7 @@ class ConjuntosApp:
         self.btn_finalizar = ttk.Button(root, text="Finalizar", command=root.quit)
         self.btn_finalizar.pack(pady=5)
 
+    #Crea la ventana para crear los conjuntos
     def construir_conjuntos(self):
         self.construir_ventana = tk.Toplevel(self.root)
         self.construir_ventana.title("Construir Conjuntos")
@@ -40,6 +41,9 @@ class ConjuntosApp:
         
         ttk.Button(self.construir_ventana, text="Agregar Conjunto", command=self.agregar_conjunto).pack(pady=10)
     
+    #Trabaja con los elementos trabajados para mostrar una ventana con el mensaje de éxito o fracaso. 
+    #Verificando los elementos agregados y creando la separación de los elementos según las comas. 
+
     def agregar_conjunto(self):
         conjunto = self.entry_conjunto.get().split(',')
         conjunto = [e.strip() for e in conjunto]  # Elimina espacios adicionales
@@ -51,22 +55,27 @@ class ConjuntosApp:
         else:
             messagebox.showerror("Error", "Uno o más elementos no son válidos.")
 
+    #Función que trabaja con las operaciones de conjuntos y la creación de las ventanas necesarias. 
     def operar_conjuntos(self):
+        #Manejo del error, de que se deben crear un mínimo de dos conjuntos primero, para poder operar. 
         if len(self.conjuntos) < 2:
             messagebox.showwarning("Advertencia", "Debe crear al menos dos conjuntos primero.")
             return
         
+
         self.operar_ventana = tk.Toplevel(self.root)
         self.operar_ventana.title("Operar Conjuntos")
 
         ttk.Label(self.operar_ventana, text="Seleccione la operación:").pack(pady=10)
         self.operacion = tk.StringVar()
+        #Aquí se definen los botones de radio para escoger cada una de las operaciones posibles. 
         ttk.Radiobutton(self.operar_ventana, text="Complemento", variable=self.operacion, value="Complemento").pack()
         ttk.Radiobutton(self.operar_ventana, text="Unión", variable=self.operacion, value="Union").pack()
         ttk.Radiobutton(self.operar_ventana, text="Intersección", variable=self.operacion, value="Interseccion").pack()
         ttk.Radiobutton(self.operar_ventana, text="Diferencia", variable=self.operacion, value="Diferencia").pack()
         ttk.Radiobutton(self.operar_ventana, text="Diferencia Simétrica", variable=self.operacion, value="Diferencia Simetrica").pack()
 
+        #Se seleccionan los conjuntos sobre los cuales se va a hacer la operación. 
         ttk.Label(self.operar_ventana, text="Seleccione los conjuntos a operar (haga click encima de los que quiera usar):").pack(pady=10)
         self.listbox_conjuntos = tk.Listbox(self.operar_ventana, selectmode=tk.SINGLE, font=('Helvetica', 12))
         self.listbox_conjuntos.bind('<<ListboxSelect>>', self.agregar_a_seleccionados)
@@ -83,8 +92,10 @@ class ConjuntosApp:
             index = selection[0]
             self.seleccionados.append(self.conjuntos[index])
 
+    #Función que trabaja con las operaciones definidas abajo. 
     def realizar_operacion(self):
         operacion = self.operacion.get()
+        #Este if permite manejar la entrada de datos. 
         if len(self.seleccionados) < 2:
             messagebox.showwarning("Advertencia", "Debe seleccionar al menos dos conjuntos para operar.")
             return
@@ -101,6 +112,7 @@ class ConjuntosApp:
             elif operacion == "Diferencia Simetrica":
                 resultado = self.diferencia_simetrica(resultado, conjunto)
             elif operacion == "Complemento":
+                #Definimos el conjunto universo de A-Z y de 0-9
                 universo = [chr(i) for i in range(ord('A'), ord('Z')+1)] + [str(i) for i in range(0, 10)]
                 resultado = self.complemento(resultado, universo)
 
@@ -110,6 +122,7 @@ class ConjuntosApp:
         self.seleccionados.clear()
         self.operar_ventana.destroy()
 
+    #Función con la lógica para editar los conjuntos. 
     def editar_conjuntos(self):
         if len(self.conjuntos) == 0:
             messagebox.showwarning("Advertencia", "No hay conjuntos disponibles para editar.")
@@ -126,6 +139,7 @@ class ConjuntosApp:
 
         ttk.Button(self.editar_ventana, text="Editar", command=self.seleccionar_conjunto_para_editar).pack(pady=10)
     
+    #Función que selecciona los conjuntos a editar y los modifica con la interfaz. 
     def seleccionar_conjunto_para_editar(self):
         selection = self.listbox_editar.curselection()
         if not selection:
@@ -147,6 +161,7 @@ class ConjuntosApp:
 
         ttk.Button(self.ventana_edicion, text="Guardar Cambios", command=self.guardar_cambios).pack(pady=10)
 
+    #Función que permite guardar los cambios en los conjuntos realizados. 
     def guardar_cambios(self):
         conjunto_editado = self.entry_editar.get().split(',')
         conjunto_editado = [e.strip() for e in conjunto_editado]  # Elimina espacios adicionales
@@ -159,9 +174,11 @@ class ConjuntosApp:
         else:
             messagebox.showerror("Error", "Uno o más elementos no son válidos.")
 
+    #Función que permite validar la entrada alfanumerica con un máximo de 1 por elemento. 
     def validar_entrada(self, elemento):
         return elemento.isalnum() and len(elemento) == 1
 
+    #Función para unir dos conjuntos. 
     def union(self, conjunto1, conjunto2):
         resultado = conjunto1[:]
         for elemento in conjunto2:
@@ -169,6 +186,7 @@ class ConjuntosApp:
                 resultado.append(elemento)
         return resultado
 
+    #Función para calcular la intersección entre los conjuntos. 
     def interseccion(self, conjunto1, conjunto2):
         resultado = []
         for elemento in conjunto1:
@@ -176,20 +194,24 @@ class ConjuntosApp:
                 resultado.append(elemento)
         return resultado
 
+    #Función para calcular la diferencia entre los conjuntos. 
     def diferencia(self, conjunto1, conjunto2):
         resultado = [elemento for elemento in conjunto1 if elemento not in conjunto2]
         return resultado
 
+    #Función para calcular la diferencia simétrica entre los dos conjuntos. 
     def diferencia_simetrica(self, conjunto1, conjunto2):
         union = self.union(conjunto1, conjunto2)
         interseccion = self.interseccion(conjunto1, conjunto2)
         resultado = [elemento for elemento in union if elemento not in interseccion]
         return resultado
 
+    #Función para calcular el complemento de los conjuntos, conjunto universo definido en la función de realizar operación. 
     def complemento(self, conjunto, universo):
         resultado = [elemento for elemento in universo if elemento not in conjunto]
         return resultado
 
+#Función main 
 if __name__ == "__main__":
     root = tk.Tk()
     app = ConjuntosApp(root)
