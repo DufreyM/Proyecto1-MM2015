@@ -43,7 +43,6 @@ class ConjuntosApp:
     
     #Trabaja con los elementos trabajados para mostrar una ventana con el mensaje de éxito o fracaso. 
     #Verificando los elementos agregados y creando la separación de los elementos según las comas. 
-
     def agregar_conjunto(self):
         conjunto = self.entry_conjunto.get().split(',')
         conjunto = [e.strip() for e in conjunto]  # Elimina espacios adicionales
@@ -80,9 +79,8 @@ class ConjuntosApp:
         self.listbox_conjuntos = tk.Listbox(self.operar_ventana, selectmode=tk.SINGLE, font=('Helvetica', 12))
         self.listbox_conjuntos.bind('<<ListboxSelect>>', self.agregar_a_seleccionados)
         for i, conjunto in enumerate(self.conjuntos):
-            self.listbox_conjuntos.insert(tk.END, f"Conjunto {i+1}: {', '.join(conjunto)}")
+            self.listbox_conjuntos.insert(tk.END, f"Conjunto {i+1}: {{{', '.join(conjunto)}}}")
         self.listbox_conjuntos.pack(pady=5)
-
         ttk.Button(self.operar_ventana, text="Realizar Operación", command=self.realizar_operacion).pack(pady=10)
     
     def agregar_a_seleccionados(self, event):
@@ -116,8 +114,8 @@ class ConjuntosApp:
                 universo = [chr(i) for i in range(ord('A'), ord('Z')+1)] + [str(i) for i in range(0, 10)]
                 resultado = self.complemento(resultado, universo)
 
-        messagebox.showinfo("Resultado", f"El resultado de {operacion} es: {', '.join(sorted(resultado))}")
-        
+        messagebox.showinfo("Resultado", f"El resultado de {operacion} es: {{{', '.join(sorted(resultado))}}}")
+
         # Limpiar los conjuntos seleccionados después de la operación
         self.seleccionados.clear()
         self.operar_ventana.destroy()
@@ -134,7 +132,7 @@ class ConjuntosApp:
         ttk.Label(self.editar_ventana, text="Seleccione el conjunto a editar:").pack(pady=10)
         self.listbox_editar = tk.Listbox(self.editar_ventana, font=('Helvetica', 12))
         for i, conjunto in enumerate(self.conjuntos):
-            self.listbox_editar.insert(tk.END, f"Conjunto {i+1}: {', '.join(conjunto)}")
+            self.listbox_editar.insert(tk.END, f"Conjunto {i+1}: {{{', '.join(conjunto)}}}")
         self.listbox_editar.pack(pady=5)
 
         ttk.Button(self.editar_ventana, text="Editar", command=self.seleccionar_conjunto_para_editar).pack(pady=10)
